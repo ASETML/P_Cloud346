@@ -20,6 +20,9 @@
         >
           Confirm
         </button>
+        <button type="button" class="confirm-button active" @click="handleMsalLogin">
+          Login with Microsoft
+        </button>
       </div>
     </form>
   </div>
@@ -27,6 +30,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { msalInstance } from '../msalConfig.js'
 const name = ref('')
 const password = ref('')
 const token = ref('')
@@ -73,6 +77,32 @@ const handleSubmit = async () => {
     alert('An unexpected error occurred.')
   }
 }
+
+const handleMsalLogin = async () => {
+  try {
+    const loginResponse = await msalInstance.loginPopup({ scopes: ['User.Read'] })
+    const account = loginResponse.account
+    const tokenResponse = await msalInstance.acquireTokenSilent({ account, scopes: ['User.Read'] })
+
+    // Sending accessToken to the backend
+    const res = await fetch('http://localhost:9999/api/auth/msal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: tokenResponse.accessToken }),
+    })
+
+    const data = await res.json()
+    if (data.jwt) {
+      localStorage.setItem('token', `Bearer ${data.jwt}`)
+      localStorage.setItem('CurrentUserId', data.userId)
+      window.location.href = '/'
+    }
+  } catch (e) {
+    console.error(e)
+    alert('MSAL login failed')
+  }
+}
+
 const handleCancel = () => {
   // Cancel logic - for example, redirect or reset form
 
