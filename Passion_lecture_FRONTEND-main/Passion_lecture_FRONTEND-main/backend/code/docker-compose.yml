@@ -1,0 +1,52 @@
+version: "3.3"
+
+services:
+  db:
+    image: mysql:8.0.30
+    container_name: ${COMPOSE_PROJECT_NAME}_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    restart: always
+    ports:
+      - "6033:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./scripts:/scripts
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.0
+    container_name: ${COMPOSE_PROJECT_NAME}_phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - "8081:80"
+
+#  app:
+#    build:
+#      context: .
+#      dockerfile: nodejs.dockerfile
+#    container_name: ${COMPOSE_PROJECT_NAME}_app
+#    ports:
+#      - "9999:9999"
+#    depends_on:
+#      - db
+#    environment:
+#      DB_HOST: ${DB_HOST}
+#      DB_PORT: ${DB_PORT}
+#      DB_USER: ${DB_USER}
+#      DB_PASSWORD: ${DB_PASSWORD}
+#      DB_NAME: ${DB_NAME}
+#    volumes:
+#      - .:/home/node/app
+#    working_dir: /home/node/app
+#    command: sh -c "npm install && npm start"
+
+volumes:
+  dbdata:
