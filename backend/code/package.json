@@ -10,6 +10,8 @@
   "author": "APT",
   "license": "ISC",
   "dependencies": {
+    "@azure/msal-node": "^3.8.1",
+    "axios": "^1.13.2",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
