@@ -31,6 +31,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { msalInstance } from '../msalConfig.js'
+
 const name = ref('')
 const password = ref('')
 const token = ref('')
@@ -120,7 +121,6 @@ const handleCancel = () => {
   color: #999;
   cursor: not-allowed;
 }
-
 .confirm-button.disabled:hover {
   background-color: #ccc;
   color: #888;
@@ -130,7 +130,6 @@ const handleCancel = () => {
   background-color: lightgray;
   border: none;
 }
-
 .confirm-button.active {
   background-color: green;
   color: white;
@@ -141,7 +140,6 @@ const handleCancel = () => {
   padding: 2rem 1rem;
   padding-top: 5rem; /* Add space for fixed header */
 }
-
 .page-title {
   font-size: 2.25rem;
   font-weight: bold;
@@ -149,7 +147,6 @@ const handleCancel = () => {
   text-align: center;
   margin-bottom: 3rem;
 }
-
 .register-form {
   max-width: 28rem;
   margin: 0 auto;
@@ -157,31 +154,26 @@ const handleCancel = () => {
   flex-direction: column;
   gap: 1.5rem;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
 }
-
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
   color: #3b6992; /* text-medium-blue */
 }
-
 .form-input {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #7abc94; /* border-primary-green */
   border-radius: 0.25rem;
 }
-
 .form-actions {
   display: flex;
   justify-content: space-between;
   padding-top: 2rem;
 }
-
 .cancel-button {
   background-color: #f26565; /* bg-delete-btn */
   color: black;
@@ -191,11 +183,9 @@ const handleCancel = () => {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
 .cancel-button:hover {
   background-color: #f37777;
 }
-
 .confirm-button {
   background-color: #7abc94; /* bg-primary-green */
   color: black;
@@ -205,7 +195,6 @@ const handleCancel = () => {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
 .confirm-button:hover {
   background-color: #9ed3ac;
 }

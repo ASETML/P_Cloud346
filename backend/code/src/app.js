@@ -12,6 +12,7 @@ import categoryBooksRouter from "./routes/categories/books.js";
 import authorBooksRouter from "./routes/authors/books.js";
 import userRouter from "./routes/users/users.js";
 import loginRouter from "./routes/auth/login.js";
+import msalRouter from "./routes/auth/msal.js";
 
 const app = express();
 app.use(cors()); // ← allows all origins (including http://localhost:5173)
@@ -38,6 +39,7 @@ app.use("/api/users", userRouter);
 
 // Auth routes
 app.use("/api/auth/login", loginRouter);
+app.use("/api/auth/msal", msalRouter);
 
 // Makes the uploads folder accessible at /uploads
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
