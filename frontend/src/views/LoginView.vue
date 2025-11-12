@@ -81,6 +81,9 @@ const handleSubmit = async () => {
 
 const handleMsalLogin = async () => {
   try {
+    // Initialization before using MSAL
+    await msalInstance.initialize()
+
     const loginResponse = await msalInstance.loginPopup({ scopes: ['User.Read'] })
     const account = loginResponse.account
     const tokenResponse = await msalInstance.acquireTokenSilent({ account, scopes: ['User.Read'] })
