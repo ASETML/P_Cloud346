@@ -47,14 +47,15 @@ router.post("/", async (req, res) => {
         }
       );
 
-    if (users.length === 0) {
-     // create user from model
-      user = await User.create({
-      username: displayName,
-      email,
-      ms_id: msId,
-      isAdmin: false,
-    });
+      if (users.length === 0) {
+        // create user from model
+        user = await User.create({
+          username: displayName,
+          email,
+          ms_id: msId,
+          isAdmin: false,
+        });
+      }
     } else {
       user = users[0];
     }
