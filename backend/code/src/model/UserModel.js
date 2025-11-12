@@ -18,6 +18,15 @@ const UserModel = (sequelize, DataTypes) => {
         allowNull: false,
         unique: { msg: "Ce username est déjà pris." },
       },
+      ms_id: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       isAdmin: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

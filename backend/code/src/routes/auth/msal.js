@@ -2,7 +2,8 @@ import express from "express";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { privateKey } from "../../controllers/auth/private_key.js";
-import sequelize from "../../db/sequelize.js";
+import bcrypt from "bcrypt";
+import { sequelize, User } from "../../db/sequelize.js";
 import { QueryTypes } from "sequelize";
 
 const router = express.Router();
@@ -40,18 +41,20 @@ router.post("/", async (req, res) => {
     if (users.length === 0) {
       // Crée un nouvel utilisateur Microsoft
       const [result] = await sequelize.query(
-        "INSERT INTO t_utilisateur (nom, email, ms_id) VALUES (?, ?, ?)",
+        "INSERT INTO t_utilisateur (username, email, ms_id, date_creation, is_admin) VALUES (?, ?, ?, NOW(), false)",
         {
           replacements: [displayName, email, msId],
         }
       );
 
-      user = {
-        utilisateur_id: result,
-        nom: displayName,
-        email,
-        ms_id: msId,
-      };
+    if (users.length === 0) {
+     // create user from model
+      user = await User.create({
+      username: displayName,
+      email,
+      ms_id: msId,
+      isAdmin: false,
+    });
     } else {
       user = users[0];
     }
