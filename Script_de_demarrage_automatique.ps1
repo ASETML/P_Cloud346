@@ -18,7 +18,7 @@ try {
     # Frontend 
     Write-Host "`n=== INSTALLATION DES DÉPENDANCES FRONTEND ===" -ForegroundColor Cyan
     
-    Set-Location -Path .\frontend\PassionLecture
+    Set-Location -Path .\frontend
     npm install
     
     Write-Host "`n=== DÉMARRAGE DU SERVEUR FRONTEND ===" -ForegroundColor Cyan
