@@ -1,4 +1,4 @@
-# Passion_lecture_FRONTEND
+# Passion_lecture Azure
 
 ## 🛠️ Technologies utilisées
 
