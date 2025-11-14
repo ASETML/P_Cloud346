@@ -25,28 +25,58 @@ const port = 9999;
 app.use(cors());
 app.use(express.json());
 
-// OIDC middleware
 app.use(
   oidcAuth({
-    authRequired: false,
+    authRequired: false, // not all routes require authentication
     issuerBaseURL: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/v2.0`,
-    baseURL: process.env.BASE_URL || `http://localhost:${port}`,
+    baseURL: process.env.BASE_URL || "http://localhost:9999",
     clientID: process.env.AZURE_CLIENT_ID,
-    clientSecret: process.env.AZURE_CLIENT_SECRET, // Value from Azure
-    secret: process.env.AZURE_CLIENT_SECRET, // for express-openid-connect, without session
+    clientSecret: process.env.AZURE_CLIENT_SECRET,
+    secret: process.env.AZURE_CLIENT_SECRET, // only needed for OIDC, no session
     authorizationParams: {
       scope: "openid profile email",
       response_type: "code",
     },
     routes: {
-      login: "/ms-login",
+      login: "/ms-login", // GET redirect to Microsoft login
       logout: "/ms-logout",
-      callback: "/callback",
+      callback: "/callback", // OIDC callback endpoint
     },
   })
 );
 
-// Binding OIDC to the request object
+// --- POST endpoint for frontend login flow ---
+// Frontend sends authorization code here to exchange it for tokens
+app.post("/ms-login", async (req, res) => {
+  const code = req.query.code;
+  if (!code) return res.status(400).json({ error: "No code provided" });
+
+  try {
+    // Exchange the authorization code for an access token
+    const tokenResponse = await fetch(
+      `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: process.env.AZURE_CLIENT_ID,
+          client_secret: process.env.AZURE_CLIENT_SECRET,
+          code: code,
+          grant_type: "authorization_code",
+          redirect_uri: process.env.BASE_URL + "/callback", // must match Azure registration
+        }),
+      }
+    );
+
+    const tokenData = await tokenResponse.json();
+    res.json(tokenData); // send tokens to frontend
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to login" });
+  }
+});
+
+// --- Bind OIDC user info to request object ---
 app.use((req, _res, next) => {
   if (req.oidc?.isAuthenticated() && req.oidc.user) {
     req.user = {
@@ -58,10 +88,12 @@ app.use((req, _res, next) => {
   next();
 });
 
-// Examination
+// --- Simple test endpoint ---
 app.get("/", (req, res) => {
   res.send("Hello World! Logged in? " + (req.user ? "Yes" : "No"));
 });
+
+app.use("/ms-login", msalRouter);
 
 // Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

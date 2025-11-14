@@ -10,21 +10,28 @@ export default {
   setup() {
     const router = useRouter()
 
-    onMounted(() => {
+    onMounted(async () => {
       const urlParams = new URLSearchParams(window.location.search)
       const code = urlParams.get('code')
+
       if (code) {
-        // Отправляем код на бэкенд для получения токена
-        fetch(`http://localhost:9999/ms-login?code=${code}`, {
-          method: 'POST',
-        })
-          .then(() => {
-            router.push('/') // редирект на домашнюю страницу после логина
+        try {
+          const response = await fetch(`http://localhost:9999/ms-login?code=${code}`, {
+            method: 'POST',
           })
-          .catch((err) => {
-            console.error(err)
-            router.push('/login')
-          })
+
+          if (!response.ok) throw new Error('Failed to login')
+
+          const data = await response.json()
+          // Сохраняем токен в localStorage
+          localStorage.setItem('token', data.access_token)
+          localStorage.setItem('CurrentUserId', data.id_token)
+
+          router.push('/') // редирект на домашнюю страницу после логина
+        } catch (err) {
+          console.error(err)
+          router.push('/login')
+        }
       } else {
         router.push('/login')
       }

@@ -13,6 +13,33 @@ router.get("/", (req, res) => {
   res.redirect("/ms-login");
 });
 
+router.post("/", async (req, res) => {
+  const code = req.query.code;
+  if (!code) return res.status(400).send("Code not provided");
+
+  try {
+    const params = new URLSearchParams();
+    params.append("client_id", process.env.AZURE_CLIENT_ID);
+    params.append("scope", "openid profile email");
+    params.append("code", code);
+    params.append("redirect_uri", process.env.BASE_URL + "/callback");
+    params.append("grant_type", "authorization_code");
+    params.append("client_secret", process.env.AZURE_CLIENT_SECRET);
+
+    const tokenResponse = await axios.post(
+      `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/token`,
+      params,
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    // Вернуть токен фронтенду
+    res.json(tokenResponse.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).send("Token exchange failed");
+  }
+});
+
 /*
 // Microsoft Graph endpoint
 const GRAPH_URL = "https://graph.microsoft.com/v1.0/me";
