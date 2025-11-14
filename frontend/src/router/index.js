@@ -62,6 +62,11 @@ const router = createRouter({
       name: 'Admin',
       component: () => import('../views/AdminView.vue'),
     },
+    {
+      path: '/callback',
+      name: 'LoginCallback',
+      component: () => import('../views/LoginCallbackView.vue'),
+    },
   ],
 })
 

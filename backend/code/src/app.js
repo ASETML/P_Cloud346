@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import express from "express";
-import { sequelize, initDb, Book } from "./db/sequelize.js";
 import cors from "cors";
 import path from "path";
+import eoc from "express-openid-connect";
+import { sequelize, initDb, Book } from "./db/sequelize.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import bookRouter from "./routes/books/books.js";
@@ -14,26 +15,25 @@ import authorBooksRouter from "./routes/authors/books.js";
 import userRouter from "./routes/users/users.js";
 import loginRouter from "./routes/auth/login.js";
 import msalRouter from "./routes/auth/msal.js";
-import eoc from "express-openid-connect";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 const { auth: oidcAuth } = eoc;
-
 const app = express();
 const port = 9999;
 
 app.use(cors());
 app.use(express.json());
 
+// OIDC middleware
 app.use(
   oidcAuth({
     authRequired: false,
     issuerBaseURL: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/v2.0`,
-    baseURL: process.env.BASE_URL || "http://localhost:9999",
+    baseURL: process.env.BASE_URL || `http://localhost:${port}`,
     clientID: process.env.AZURE_CLIENT_ID,
-    clientSecret: process.env.AZURE_CLIENT_SECRET,
-    secret: process.env.AZURE_CLIENT_SECRET, // нужен только для OIDC, сессии нет
+    clientSecret: process.env.AZURE_CLIENT_SECRET, // Value from Azure
+    secret: process.env.AZURE_CLIENT_SECRET, // for express-openid-connect, without session
     authorizationParams: {
       scope: "openid profile email",
       response_type: "code",
@@ -46,7 +46,7 @@ app.use(
   })
 );
 
-// Привязка OIDC к объекту запроса
+// Binding OIDC to the request object
 app.use((req, _res, next) => {
   if (req.oidc?.isAuthenticated() && req.oidc.user) {
     req.user = {
@@ -58,7 +58,7 @@ app.use((req, _res, next) => {
   next();
 });
 
-// Проверка
+// Examination
 app.get("/", (req, res) => {
   res.send("Hello World! Logged in? " + (req.user ? "Yes" : "No"));
 });
