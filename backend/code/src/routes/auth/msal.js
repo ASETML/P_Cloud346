@@ -8,6 +8,12 @@ import { QueryTypes } from "sequelize";
 
 const router = express.Router();
 
+// redirect on OIDC login
+router.get("/", (req, res) => {
+  res.redirect("/ms-login");
+});
+
+/*
 // Microsoft Graph endpoint
 const GRAPH_URL = "https://graph.microsoft.com/v1.0/me";
 
@@ -78,6 +84,6 @@ router.post("/", async (req, res) => {
       error: error.message,
     });
   }
-});
+});*/
 
 export default router;

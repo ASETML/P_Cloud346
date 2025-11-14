@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import { sequelize, initDb, Book } from "./db/sequelize.js";
 import cors from "cors";
@@ -13,11 +14,54 @@ import authorBooksRouter from "./routes/authors/books.js";
 import userRouter from "./routes/users/users.js";
 import loginRouter from "./routes/auth/login.js";
 import msalRouter from "./routes/auth/msal.js";
+import eoc from "express-openid-connect";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
+const { auth: oidcAuth } = eoc;
 
 const app = express();
-app.use(cors()); // ← allows all origins (including http://localhost:5173)
-app.use(express.json());
 const port = 9999;
+
+app.use(cors());
+app.use(express.json());
+
+app.use(
+  oidcAuth({
+    authRequired: false,
+    issuerBaseURL: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/v2.0`,
+    baseURL: process.env.BASE_URL || "http://localhost:9999",
+    clientID: process.env.AZURE_CLIENT_ID,
+    clientSecret: process.env.AZURE_CLIENT_SECRET,
+    secret: process.env.AZURE_CLIENT_SECRET, // нужен только для OIDC, сессии нет
+    authorizationParams: {
+      scope: "openid profile email",
+      response_type: "code",
+    },
+    routes: {
+      login: "/ms-login",
+      logout: "/ms-logout",
+      callback: "/callback",
+    },
+  })
+);
+
+// Привязка OIDC к объекту запроса
+app.use((req, _res, next) => {
+  if (req.oidc?.isAuthenticated() && req.oidc.user) {
+    req.user = {
+      username: req.oidc.user.name || "User",
+      email: req.oidc.user.email,
+      oidc_sub: req.oidc.user.sub,
+    };
+  }
+  next();
+});
+
+// Проверка
+app.get("/", (req, res) => {
+  res.send("Hello World! Logged in? " + (req.user ? "Yes" : "No"));
+});
 
 // Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

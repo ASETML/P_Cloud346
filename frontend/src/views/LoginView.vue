@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { msalInstance } from '../msalConfig.js'
+//import { msalInstance } from '../msalConfig.js'
 
 const name = ref('')
 const password = ref('')
@@ -79,32 +79,8 @@ const handleSubmit = async () => {
   }
 }
 
-const handleMsalLogin = async () => {
-  try {
-    // Initialization before using MSAL
-    await msalInstance.initialize()
-
-    const loginResponse = await msalInstance.loginPopup({ scopes: ['User.Read'] })
-    const account = loginResponse.account
-    const tokenResponse = await msalInstance.acquireTokenSilent({ account, scopes: ['User.Read'] })
-
-    // Sending accessToken to the backend
-    const res = await fetch('http://localhost:9999/api/auth/msal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: tokenResponse.accessToken }),
-    })
-
-    const data = await res.json()
-    if (data.jwt) {
-      localStorage.setItem('token', `Bearer ${data.jwt}`)
-      localStorage.setItem('CurrentUserId', data.userId)
-      window.location.href = '/'
-    }
-  } catch (e) {
-    console.error(e)
-    alert('MSAL login failed')
-  }
+const handleMsalLogin = () => {
+  window.location.href = 'http://localhost:9999/ms-login'
 }
 
 const handleCancel = () => {

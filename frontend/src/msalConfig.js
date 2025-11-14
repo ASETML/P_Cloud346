@@ -1,4 +1,4 @@
-import { PublicClientApplication } from '@azure/msal-browser'
+/*import { PublicClientApplication } from '@azure/msal-browser'
 
 const msalConfig = {
   auth: {
@@ -12,4 +12,4 @@ const msalConfig = {
   },
 }
 
-export const msalInstance = new PublicClientApplication(msalConfig)
+export const msalInstance = new PublicClientApplication(msalConfig)*/
