@@ -38,6 +38,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
 // Reactive values for the input fields
 const title = ref('')
@@ -72,13 +73,13 @@ const getUserIdFromToken = () => {
 
 // This method is called when you submit the form
 const submitBook = async () => {
-  /* const token = localStorage.getItem('token')
-  if (!token) {
-    message.value = 'User is not authorized.'
+  if (!isLoggedIn()) {
+    message.value = 'User is not authenticated. Please log in first.'
     return
   }
-*/
-  const userId = localStorage.getItem('CurrentUserId') // temporarily 1 if there is no token
+  const userId = getCurrentUserId()
+  const token = getToken()
+  // temporarily 1 if there is no token
   //const userId = getUserIdFromToken() || 1 // temporarily 1 if there is no token
 
   const formData = new FormData()
@@ -89,7 +90,6 @@ const submitBook = async () => {
   formData.append('writer_nom', writer.value)
   formData.append('userId', userId)
 
-  // const body = { formData }
   if (image.value) {
     formData.append('image', image.value) //important: must match with `upload.single("image")`
   }

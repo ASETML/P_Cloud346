@@ -39,6 +39,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import DisplayBooks from '../components/DisplayBooks.vue'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
 // Initialize the router
 const router = useRouter()
@@ -49,34 +50,34 @@ const user = ref(null)
 const books = ref([])
 const loading = ref(true)
 const comments = ref()
-onMounted(async () => {
-  // Fetch books from API
 
+onMounted(async () => {
   try {
-    const userId = localStorage.getItem('CurrentUserId')
-    if (!userId) {
-      alert('please log in first')
+    const userId = getCurrentUserId()
+    const token = getToken()
+    if (!userId || !token) {
+      alert('Please log in first')
+      router.push('/login')
       return
     }
 
-    const response = await fetch(`http://localhost:9999/api/users/${userId}`)
+    const response = await fetch(`http://localhost:9999/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
     const result = await response.json()
-    // If the response has the structure { message: "...", data: [...] }
     user.value = result.data
-    try {
-      const answer = await fetch(`http://localhost:9999/api/books/${userId}/user`)
-      const outcome = await answer.json()
-      books.value = outcome.data
-    } catch (error) {
-      console.error('Error getting users books:', error)
-    }
-    try {
-      const answer = await fetch(`http://localhost:9999/api/books/${userId}/notes`)
-      const outcome = await answer.json()
-      comments.value = outcome.length
-    } catch (e) {
-      console.log(e)
-    }
+
+    const booksRes = await fetch(`http://localhost:9999/api/books/${userId}/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const booksData = await booksRes.json()
+    books.value = booksData.data
+
+    const commentsRes = await fetch(`http://localhost:9999/api/books/${userId}/notes`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const commentsData = await commentsRes.json()
+    comments.value = commentsData.length
   } catch (error) {
     console.error('Error loading user:', error)
   } finally {

@@ -30,7 +30,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-//import { msalInstance } from '../msalConfig.js'
 
 const name = ref('')
 const password = ref('')
@@ -80,17 +79,13 @@ const handleSubmit = async () => {
 }
 
 const handleMsalLogin = () => {
-  window.location.href = 'http://localhost:9999/ms-login'
+  window.location.href = 'http://localhost:9999/msal/login'
 }
 
 const handleCancel = () => {
   // Cancel logic - for example, redirect or reset form
-
   name.value = ''
   password.value = ''
-
-  // You might also want to navigate away:
-  //this.$router.push('/')
 }
 </script>
 

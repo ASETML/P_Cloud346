@@ -39,6 +39,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
 export default {
   name: 'MyBooksView',
@@ -51,16 +52,16 @@ export default {
     const fetchMyBooks = async () => {
       try {
         loading.value = true
-        const userId = localStorage.getItem('CurrentUserId')
-        const token = localStorage.getItem('token')
+        const userId = getCurrentUserId()
+        const token = getToken()
 
-        if (!token) {
+        if (!token || !userId) {
           throw new Error('User not authenticated')
         }
 
         const response = await fetch(`http://localhost:9999/api/books/${userId}/user`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`,
           },
         })
 

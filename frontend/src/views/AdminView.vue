@@ -43,68 +43,61 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
-export default {
-  name: 'MyBooksView',
-  setup() {
-    const books = ref([])
-    const loading = ref(true)
-    const error = ref(null)
-    const router = useRouter()
-    const isAdmin = ref()
-    const user = ref('')
-    const isUserAdmin = async () => {
-      try {
-        const userId = localStorage.getItem('CurrentUserId')
-        const response = await fetch(`http://localhost:9999/api/users/${userId}`)
-        const result = await response.json()
-        user.value = result.data
-        isAdmin.value = user.value.isAdmin
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    const fetchMyBooks = async () => {
-      try {
-        loading.value = true
-        const userId = localStorage.getItem('CurrentUserId')
-        const token = localStorage.getItem('token')
 
-        if (!token) {
-          throw new Error('User not authenticated')
-        }
+const books = ref([])
+const loading = ref(true)
+const error = ref(null)
+const isAdmin = ref(false)
+const router = useRouter()
+const user = ref(null)
 
-        const response = await fetch(`http://localhost:9999/api/books`)
+const checkAdmin = async () => {
+  const userId = getCurrentUserId()
+  const token = getToken()
+  if (!userId || !token) {
+    router.push('/login')
+    return
+  }
 
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error('Server response:', errorText)
-          throw new Error(`Failed to fetch books: ${response.status} ${response.statusText}`)
-        }
-
-        const contentType = response.headers.get('content-type')
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Server did not return JSON')
-        }
-
-        const result = await response.json()
-        console.log('Received books data:', result)
-        books.value = result.data || []
-      } catch (err) {
-        console.error('Error fetching books:', err)
-        error.value = err.message || 'Failed to load your books'
-        if (err.message === 'User not authenticated') {
-          router.push('/login')
-        }
-      } finally {
-        loading.value = false
-      }
-    }
-
-    onMounted(() => {
-      isUserAdmin()
-      fetchMyBooks()
+  try {
+    const response = await fetch(`http://localhost:9999/api/users/${userId}`, {
+      headers: { Authorization: token },
     })
+    const result = await response.json()
+    user.value = result.data
+    isAdmin.value = user.value.isAdmin
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const fetchBooks = async () => {
+  try {
+    loading.value = true
+    const token = getToken()
+    if (!token) throw new Error('User not authenticated')
+
+    const response = await fetch(`http://localhost:9999/api/books`, {
+      headers: { Authorization: token },
+    })
+    if (!response.ok) throw new Error('Failed to fetch books')
+    const result = await response.json()
+    books.value = result.data || []
+  } catch (err) {
+    console.error(err)
+    error.value = err.message || 'Failed to load books'
+    if (err.message === 'User not authenticated') router.push('/login')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  checkAdmin()
+  fetchBooks()
+})
 
     return {
       books,

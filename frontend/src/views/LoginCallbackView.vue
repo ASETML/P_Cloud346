@@ -1,41 +1,33 @@
 <template>
-  <div>Logging in...</div>
+  <!-- Simple page shown while redirecting -->
+  <div>Redirecting...</div>
 </template>
 
-<script>
+<script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-export default {
-  setup() {
-    const router = useRouter()
+const router = useRouter()
 
-    onMounted(async () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      const code = urlParams.get('code')
+onMounted(async () => {
+   // Get the "code" query parameter returned from Microsoft OAuth2
+  const code = new URLSearchParams(window.location.search).get('code')
 
-      if (code) {
-        try {
-          const response = await fetch(`http://localhost:9999/ms-login?code=${code}`, {
-            method: 'POST',
-          })
+   // If no code exists, redirect the user to the login page
+  if (!code) return router.push('/login')
+   // Send the code to the backend MSAL callback endpoint to exchange for tokens
+  const res = await fetch(`http://localhost:9999/msal/callback?code=${code}`, {
+    method: 'POST',
+  })
 
-          if (!response.ok) throw new Error('Failed to login')
+  const data = await res.json()
 
-          const data = await response.json()
-          // Сохраняем токен в localStorage
-          localStorage.setItem('token', data.access_token)
-          localStorage.setItem('CurrentUserId', data.id_token)
+  // Save the returned JWT and access tokens in localStorage for later use
+  localStorage.setItem('ms_jwt', data.jwt)      // JWT for app authentication
+  localStorage.setItem('ms_access', data.access_token)   // Microsoft access token
+  localStorage.setItem('ms_id', data.id_token)    // Microsoft ID token
 
-          router.push('/') // редирект на домашнюю страницу после логина
-        } catch (err) {
-          console.error(err)
-          router.push('/login')
-        }
-      } else {
-        router.push('/login')
-      }
-    })
-  },
-}
-</script>
+   // Redirect the user to the home page after successful login
+  router.push('/')
+})
+</script setup>

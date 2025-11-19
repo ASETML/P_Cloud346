@@ -47,8 +47,8 @@ const isSidebarAvailable = computed(() => !!Sidebar) // Checks if Sidebar compon
  */
 const isLoggedIn = computed(() => {
   // Check both token and userId presence in localStorage
-  const token = localStorage.getItem('token')
-  const userId = localStorage.getItem('CurrentUserId')
+  const token = ref(localStorage.getItem('token') || localStorage.getItem('ms_jwt'))
+  const userId = ref(localStorage.getItem('CurrentUserId'))
   return !!(token && userId) // Returns true only if both exist
 })
 
@@ -81,7 +81,7 @@ const tryToken = async () => {
   }
 
   // Extract the actual token from "Bearer token" format
-  const actualToken = savedToken.startsWith('Bearer ') 
+  const actualToken = savedToken.startsWith('Bearer ')
     ? savedToken.split(' ')[1] // Remove "Bearer " prefix
     : savedToken // Use token as is if no prefix
 
@@ -131,6 +131,7 @@ const toggleSidebar = () => {
  */
 const disconnect = () => {
   localStorage.removeItem('token') // Remove authentication token
+  localStorage.removeItem('ms_jwt') // Remove authentication token for MSAL
   localStorage.removeItem('CurrentUserId') // Remove user ID
   window.location.href = '/'
 }

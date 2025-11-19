@@ -143,6 +143,7 @@ import { useRouter, useRoute } from 'vue-router'
 import StarRating from '../components/star-rating.vue'
 import api from '../services/api'
 import DisplayBooks from '../components/DisplayBooks.vue'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
 // Reactive variables
 const commentText = ref('')
@@ -153,10 +154,11 @@ const evaluations = ref([])
 const loadingEvaluations = ref(true)
 const author = ref(null)
 const category = ref(null)
-const isLoggedIn = ref(false)
 const submitting = ref(false)
 
 const route = useRoute()
+const token = getToken()
+const userId = getCurrentUserId()
 
 // Computed average rating (out of 5 stars)
 const averageRating = computed(() => {
@@ -166,9 +168,9 @@ const averageRating = computed(() => {
 })
 
 // Determine login status from localStorage
-const token = localStorage.getItem('token')
+/*const token = localStorage.getItem('token')
 const userId = localStorage.getItem('CurrentUserId')
-isLoggedIn.value = !!(token && userId)
+isLoggedIn.value = !!(token && userId)*/
 
 // Load book and related details from the API
 const loadBookDetails = async () => {
@@ -219,19 +221,16 @@ const resetForm = () => {
 
 // Handle evaluation form submission
 const handleCommentSubmit = async () => {
+  if (!isUserLoggedIn.value) {
+    alert('Please login to submit an evaluation')
+    return
+  }
   if (!commentText.value || !rating.value) {
     alert('Please provide both a rating and a comment')
     return
   }
 
-  if (submitting.value) return
   submitting.value = true
-
-  if (!token || !userId) {
-    alert('Please login to submit an evaluation')
-    return
-  }
-
   try {
     const bookId = route.params.id
     const response = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
@@ -241,34 +240,30 @@ const handleCommentSubmit = async () => {
         Authorization: token,
       },
       body: JSON.stringify({
-        note: rating.value * 2, // Convert to 10-point scale
+        note: rating.value * 2,
         commentaire: commentText.value,
         user_id: userId,
         book_id: bookId,
       }),
     })
 
-    if (response.ok) {
-      // Reload evaluations after submitting
-      const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
-        headers: { Authorization: token },
-      })
-      const evaluationsResult = await evaluationsResponse.json()
-      evaluations.value = evaluationsResult
-      resetForm()
-    } else {
-      const errorData = await response.json()
-      alert(errorData.message || 'Failed to submit evaluation')
-    }
+    if (!response.ok) throw new Error('Failed to submit evaluation')
+
+    // Reload evaluations
+    const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
+      headers: { Authorization: token },
+    })
+    evaluations.value = await evaluationsResponse.json()
+    commentText.value = ''
+    rating.value = 0
   } catch (error) {
-    console.error('Error submitting evaluation:', error)
+    console.error(error)
     alert('Error submitting evaluation')
   } finally {
     submitting.value = false
   }
 }
 
-// Run when component mounts
 onMounted(() => {
   loadBookDetails()
 })

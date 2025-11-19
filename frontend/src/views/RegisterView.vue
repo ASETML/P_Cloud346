@@ -36,6 +36,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
+
 const name = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -44,9 +46,9 @@ const token = ref('')
 onMounted(async () => {
   tryToken()
 })
-const tryToken = async () => {
-  const savedToken = localStorage.getItem('token')
 
+const tryToken = async () => {
+  const savedToken = getToken()
   if (!savedToken) {
     console.log('No token found')
     return
@@ -55,9 +57,7 @@ const tryToken = async () => {
   try {
     const response = await fetch(`http://localhost:9999/api/auth/login/token`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: savedToken }),
     })
 
@@ -70,6 +70,7 @@ const tryToken = async () => {
     } else {
       console.log('Invalid or expired token')
       localStorage.removeItem('token') // clear invalid token
+      localStorage.removeItem('ms_jwt') // clear invalid MSAL token
       localStorage.removeItem('CurrentUserId') // clear invalid UserId
     }
   } catch (e) {

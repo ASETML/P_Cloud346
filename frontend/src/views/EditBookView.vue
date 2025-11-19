@@ -78,6 +78,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
 export default {
   name: 'EditBookView',
@@ -107,10 +108,11 @@ export default {
     const fetchBookDetails = async () => {
       try {
         loading.value = true
-        const token = localStorage.getItem('token')
+        const token = getToken()
+        const userId = getCurrentUserId()
         const bookId = route.params.id
 
-        if (!token) {
+        if (!token || !userId) {
           throw new Error('User not authenticated')
         }
 
@@ -140,10 +142,11 @@ export default {
     const updateBook = async () => {
       try {
         saving.value = true
-        const token = localStorage.getItem('token')
+        const token = getToken()
+        const userId = getCurrentUserId()
         const bookId = route.params.id
 
-        if (!token) {
+        if (!token || !userId) {
           throw new Error('User not authenticated')
         }
 
