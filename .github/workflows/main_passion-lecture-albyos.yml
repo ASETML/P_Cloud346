@@ -25,7 +25,7 @@ jobs:
 
       - name: Frontend npm install, build, and test
         run: |
-          cd frontend/PassionLecture/
+          cd frontend
           npm install
           npm run build --if-present
           npm run test --if-present
@@ -55,5 +55,6 @@ jobs:
           package: .
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E9BF6E81BC4743B6BD5C98D571968AA3 }}
+
 
 
