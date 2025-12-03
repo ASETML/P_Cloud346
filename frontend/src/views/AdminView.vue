@@ -34,23 +34,21 @@
       </div>
     </div>
   </div>
-  <h1 v-else>You need to be Admin to access this ressource</h1>
-  <router-link to="/">
-    <h2>go back to homepage</h2>
-  </router-link>
+  <h1 v-else>You need to be Admin to access this resource</h1>
+  <router-link to="/"><h2>Go back to homepage</h2></router-link>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
+import { getCurrentUserId, getToken } from '../utils/auth.js'
 
 const books = ref([])
 const loading = ref(true)
 const error = ref(null)
 const isAdmin = ref(false)
-const router = useRouter()
 const user = ref(null)
+const router = useRouter()
 
 const checkAdmin = async () => {
   const userId = getCurrentUserId()
@@ -62,13 +60,13 @@ const checkAdmin = async () => {
 
   try {
     const response = await fetch(`http://localhost:9999/api/users/${userId}`, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     })
     const result = await response.json()
     user.value = result.data
     isAdmin.value = user.value.isAdmin
   } catch (e) {
-    console.log(e)
+    console.error('Error checking admin:', e)
   }
 }
 
@@ -79,7 +77,7 @@ const fetchBooks = async () => {
     if (!token) throw new Error('User not authenticated')
 
     const response = await fetch(`http://localhost:9999/api/books`, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     })
     if (!response.ok) throw new Error('Failed to fetch books')
     const result = await response.json()
