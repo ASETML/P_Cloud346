@@ -6,16 +6,12 @@
         <h2 class="section-title">App Creators:</h2>
         <ul class="creator-list">
           <li>Yosef N.</li>
-          <li>Antoine P.</li>
-          <li>Charles-Henri M.</li>
         </ul>
       </div>
       <div class="footer-section">
         <h2 class="section-title">Contacts</h2>
         <ul class="contact-list">
           <li><a href="mailto:pn25kdv@eduvaud.ch">pn25kdv@eduvaud.ch</a></li>
-          <li><a href="mailto:pn01kbc@eduvaud.ch">pn01kbc@eduvaud.ch</a></li>
-          <li><a href="mailto:pc01zcg@eduvaud.ch">pc01zcg@eduvaud.ch</a></li>
         </ul>
       </div>
     </div>

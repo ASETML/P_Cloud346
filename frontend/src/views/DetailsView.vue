@@ -221,10 +221,11 @@ const resetForm = () => {
 
 // Handle evaluation form submission
 const handleCommentSubmit = async () => {
-  if (!isUserLoggedIn.value) {
+  if (!isLoggedIn.value) {
     alert('Please login to submit an evaluation')
     return
   }
+
   if (!commentText.value || !rating.value) {
     alert('Please provide both a rating and a comment')
     return

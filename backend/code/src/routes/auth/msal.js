@@ -30,7 +30,7 @@ router.get("/login", (req, res) => {
 // ---------------------------
 // 2) CALLBACK: EXCHANGE CODE FOR TOKENS
 // ---------------------------
-router.post("/callback", async (req, res) => {
+router.get("/callback", async (req, res) => {
   const code = req.query.code;
   if (!code) return res.status(400).json({ error: "No code" });
 

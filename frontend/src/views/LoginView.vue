@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-
+import { setToken } from '../utils/auth'
 const name = ref('')
 const password = ref('')
 const token = ref('')

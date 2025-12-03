@@ -1,33 +1,42 @@
 <template>
-  <!-- Simple page shown while redirecting -->
   <div>Redirecting...</div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { setMsalToken } from '@/utils/auth'
 
 const router = useRouter()
 
 onMounted(async () => {
-   // Get the "code" query parameter returned from Microsoft OAuth2
+  //We get the code from the query parameters
   const code = new URLSearchParams(window.location.search).get('code')
 
-   // If no code exists, redirect the user to the login page
-  if (!code) return router.push('/login')
-   // Send the code to the backend MSAL callback endpoint to exchange for tokens
-  const res = await fetch(`http://localhost:9999/msal/callback?code=${code}`, {
-    method: 'POST',
-  })
+  if (!code) {
+    // If there is no code, we return the user to the login page
+    return router.push('/login')
+  }
 
-  const data = await res.json()
+  try {
+    // GET request to the backend callback
+    const res = await fetch(`http://localhost:9999/msal/callback?code=${code}`)
 
-  // Save the returned JWT and access tokens in localStorage for later use
-  localStorage.setItem('ms_jwt', data.jwt)      // JWT for app authentication
-  localStorage.setItem('ms_access', data.access_token)   // Microsoft access token
-  localStorage.setItem('ms_id', data.id_token)    // Microsoft ID token
+    if (!res.ok) {
+      console.error('Callback error:', res.status)
+      return router.push('/login')
+    }
 
-   // Redirect the user to the home page after successful login
-  router.push('/')
+    const data = await res.json()
+
+    // Saving JWT and userId via centralized auth helper
+    setMsalToken(data.jwt, data.user.utilisateur_id)
+
+    // Redirect to the home page
+    router.push('/')
+  } catch (err) {
+    console.error('MSAL callback failed:', err)
+    router.push('/login')
+  }
 })
-</script setup>
+</script>

@@ -201,10 +201,6 @@ export default {
         const token = localStorage.getItem('token')
         const bookId = route.params.id
 
-        if (!token) {
-          throw new Error('User not authenticated')
-        }
-
         const response = await fetch(`http://localhost:9999/api/books/${bookId}`, {
           method: 'DELETE',
           headers: {

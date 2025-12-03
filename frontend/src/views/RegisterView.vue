@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
+import { getCurrentUserId, getToken, isLoggedIn, authHeader } from '../utils/auth.js'
 
 const name = ref('')
 const password = ref('')

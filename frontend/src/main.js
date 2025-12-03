@@ -7,6 +7,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 // Router configuration
 import router from './router'
+// helper
+import { initAuth } from './utils/auth'
+
+initAuth()
 
 // Create Vue application instance
 const app = createApp(App)

@@ -45,7 +45,6 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
 
-
 const books = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -98,15 +97,6 @@ onMounted(() => {
   checkAdmin()
   fetchBooks()
 })
-
-    return {
-      books,
-      loading,
-      error,
-      isAdmin,
-    }
-  },
-}
 </script>
 
 <style scoped>

@@ -38,7 +38,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { getCurrentUserId, getToken, isLoggedIn } from '../utils/auth.js'
+import { isLoggedIn, getCurrentUserId, getToken } from '../utils/auth.js'
 
 // Reactive values for the input fields
 const title = ref('')
@@ -73,7 +73,7 @@ const getUserIdFromToken = () => {
 
 // This method is called when you submit the form
 const submitBook = async () => {
-  if (!isLoggedIn()) {
+  if (!isLoggedIn.value) {
     message.value = 'User is not authenticated. Please log in first.'
     return
   }
