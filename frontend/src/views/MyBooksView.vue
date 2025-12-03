@@ -1,6 +1,6 @@
 <template>
   <div class="my-books">
-    <h1>My Books</h1>
+    <h1 class="section-title">My Books</h1>
     <div v-if="loading" class="loading">Loading your books...</div>
     <div v-else-if="error" class="error">
       {{ error }}
@@ -217,5 +217,13 @@ h1 {
 
 .edit-button:hover {
   background-color: #e0a800;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.4em;
+  margin-bottom: 1.5em;
+  color: #2d3e50;
+  font-weight: 700;
 }
 </style>
