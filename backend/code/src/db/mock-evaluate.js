@@ -9,7 +9,7 @@ let evaluations = [
   {
     commentaire:
       "Une aventure spatiale fascinante avec un mélange parfait de science et d'humanité. La narration est excellente et les concepts scientifiques sont bien expliqués.",
-    note: 5,
+    note: 10,
     book_id: 2,
     user_id: 2,
   },

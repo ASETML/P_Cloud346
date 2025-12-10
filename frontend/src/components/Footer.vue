@@ -5,13 +5,13 @@
       <div class="footer-section">
         <h2 class="section-title">App Creators:</h2>
         <ul class="creator-list">
-          <li>Yosef N.</li>
+          <li>Yosef Nademo</li>
         </ul>
       </div>
       <div class="footer-section">
         <h2 class="section-title">Contacts</h2>
         <ul class="contact-list">
-          <li><a href="mailto:pn25kdv@eduvaud.ch">pn25kdv@eduvaud.ch</a></li>
+          <li><a href="mailto:pn25kdv@eduvaud.ch">pn25dv@eduvaud.ch</a></li>
         </ul>
       </div>
     </div>

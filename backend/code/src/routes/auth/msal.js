@@ -30,6 +30,7 @@ router.get("/login", (req, res) => {
 // ---------------------------
 // 2) CALLBACK: EXCHANGE CODE FOR TOKENS
 // ---------------------------
+/*CODE - the authorization code is a temporary string that Microsoft sends to your app after the user logs in and consents. */
 router.get("/callback", async (req, res) => {
   const code = req.query.code;
   if (!code) return res.status(400).json({ error: "No code" });
