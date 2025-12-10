@@ -23,8 +23,9 @@ jobs:
         with:
           node-version: '24.x'
 
-      - name: npm install, build, and test
+      - name: Bakend npm install, build, and test
         run: |
+          cd backend
           npm install
           npm run build --if-present
           npm run test --if-present
@@ -33,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./backend/
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,4 +53,5 @@ jobs:
           app-name: 'passion-lecture-albyos-backend'
           slot-name: 'Production'
           package: .
+
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_14A845D5D0524D9D9F69611F1EA9246F }}
