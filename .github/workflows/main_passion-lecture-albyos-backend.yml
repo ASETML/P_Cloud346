@@ -25,7 +25,7 @@ jobs:
 
       - name: Bakend npm install, build, and test
         run: |
-          cd backend
+          cd backend/code
           npm install
           npm run build --if-present
           npm run test --if-present
@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./backend/
+          path: ./backend/code/
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,3 +55,4 @@ jobs:
           package: .
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_14A845D5D0524D9D9F69611F1EA9246F }}
+
