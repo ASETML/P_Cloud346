@@ -23,7 +23,8 @@ const sequelize = new Sequelize(
     dialect: "mysql",
     logging: false,
     ssl: {
-      required: false
+      required: true,
+      rejectUnauthorized: false
     }
   }
 );
