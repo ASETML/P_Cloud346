@@ -13,7 +13,7 @@ import { WriterModel } from "../model/WriterModel.js";
 import { UserModel } from "../model/UserModel.js";
 import { EvaluateModel } from "../model/EvaluateModel.js";
 
-import {fs} from "fs"
+import fs from "fs"
 
 const sequelize = new Sequelize(
   process.env.DB_NAME, // Nom de la DB qui doit exister
@@ -28,7 +28,7 @@ const sequelize = new Sequelize(
       required: true,
       rejectUnauthorized: false,
       minVersion: "TLSv1.2",
-      ca: fs.readFileSync("DigiCertGlobalRootG2.crt.pem")
+      ca: fs.readFileSync("src/db/DigiCertGlobalRootG2.crt.pem")
     }
   }
 );
