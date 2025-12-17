@@ -26,7 +26,6 @@ const sequelize = new Sequelize(
       required: true,
       rejectUnauthorized: false,
       minVersion: "TLSv1.2",
-      ca: process.env.CA ? Buffer.from(process.env.CA, 'utf-8') : null
     }
   }
 );
