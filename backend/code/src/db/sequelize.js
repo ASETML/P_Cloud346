@@ -26,6 +26,7 @@ const sequelize = new Sequelize(
       required: true,
       rejectUnauthorized: false,
       minVersion: "TLSv1.2",
+      ca: fs.readFileSync("DigiCertGlobalRootG2.crt.pem")
     }
   }
 );
