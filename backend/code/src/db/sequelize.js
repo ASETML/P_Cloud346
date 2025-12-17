@@ -24,7 +24,9 @@ const sequelize = new Sequelize(
     logging: false,
     ssl: {
       required: true,
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      minVersion: "TLSv1.2",
+      ca: process.env.CA
     }
   }
 );
