@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router'
 import { setMsalToken } from '@/utils/auth'
 
 const router = useRouter()
+const BACKEND_URL = 'https://passion-lecture-albyos-backend.azurewebsites.net'
 
 onMounted(async () => {
   //We get the code from the query parameters
@@ -20,7 +21,7 @@ onMounted(async () => {
 
   try {
     // GET request to the backend callback
-    const res = await fetch(`http://localhost:9999/msal/callback?code=${code}`)
+    const res = await fetch(`${BACKEND_URL}/msal/callback?code=${code}`)
 
     if (!res.ok) {
       console.error('Callback error:', res.status)
