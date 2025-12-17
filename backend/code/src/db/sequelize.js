@@ -22,6 +22,9 @@ const sequelize = new Sequelize(
     port: process.env.DB_PORT,
     dialect: "mysql",
     logging: false,
+    ssl: {
+      required: false
+    }
   }
 );
 // Le modèle Book
