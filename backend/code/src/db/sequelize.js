@@ -14,12 +14,12 @@ import { UserModel } from "../model/UserModel.js";
 import { EvaluateModel } from "../model/EvaluateModel.js";
 
 const sequelize = new Sequelize(
-  "db_books", // Nom de la DB qui doit exister
-  "root", // Nom de l'utilisateur
-  "root", // Mot de passe de l'utilisateur
+  process.env.DB_NAME, // Nom de la DB qui doit exister
+  process.env.DB_USER, // Nom de l'utilisateur
+  process.env.DB_PASSWORD, // Mot de passe de l'utilisateur
   {
-    host: "localhost",
-    port: "6033",
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: "mysql",
     logging: false,
   }
