@@ -13,6 +13,8 @@ import { WriterModel } from "../model/WriterModel.js";
 import { UserModel } from "../model/UserModel.js";
 import { EvaluateModel } from "../model/EvaluateModel.js";
 
+import {fs} from "fs"
+
 const sequelize = new Sequelize(
   process.env.DB_NAME, // Nom de la DB qui doit exister
   process.env.DB_USER, // Nom de l'utilisateur
